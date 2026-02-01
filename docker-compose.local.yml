@@ -32,7 +32,7 @@ services:
   api:
     build:
       context: ./src/backend
-      dockerfile: MyProject.WebApi/Dockerfile
+      dockerfile: Recipes.WebApi/Dockerfile
     container_name: recipes-local-api
     environment: *api-environment
     <<: *common-settings

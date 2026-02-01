@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/solution items/">
+    <File Path="../../docker-compose.local.yml" />
+    <File Path="../../.config/dotnet-tools.json" />
+    <File Path="../../global.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Recipes.WebApi/Dockerfile" />
+    <File Path="nuget.config" />
+  </Folder>
+  <Project Path="Recipes.Application/Recipes.Application.csproj" />
+  <Project Path="Recipes.Domain/Recipes.Domain.csproj" />
+  <Project Path="Recipes.Infrastructure/Recipes.Infrastructure.csproj" />
+  <Project Path="Recipes.WebApi/Recipes.WebApi.csproj" />
+</Solution>

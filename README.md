@@ -47,7 +47,7 @@ cd web-api-template
 
 ### 2. Run the Initialization Script
 
-This template includes scripts to rename the project (from "MyProject" to your desired name) and configure ports. It will also restore local .NET tools (like `dotnet-ef`).
+This template includes scripts to rename the project (from "Recipes" to your desired name) and configure ports. It will also restore local .NET tools (like `dotnet-ef`).
 
 **For macOS / Linux:**
 
@@ -89,10 +89,10 @@ docker compose -f docker-compose.local.yml up -d --build
 ```
 src/
 ├── backend/                # .NET Web API solution
-│   ├── MyProject.Domain/   # Core domain entities, value objects
-│   ├── MyProject.Application/ # Application contracts, features
-│   ├── MyProject.Infrastructure/ # Implementation (EF Core, etc.)
-│   └── MyProject.WebApi/   # API entry point
+│   ├── Recipes.Domain/   # Core domain entities, value objects
+│   ├── Recipes.Application/ # Application contracts, features
+│   ├── Recipes.Infrastructure/ # Implementation (EF Core, etc.)
+│   └── Recipes.WebApi/   # API entry point
 │
 └── frontend/               # SvelteKit application
     ├── src/

@@ -1,4 +1,4 @@
-# Cursor Rules for MyProject Web API Template
+# Cursor Rules for Recipes Web API Template
 
 ## Project Overview
 This is a .NET 10 Web API following Clean Architecture principles with four distinct layers:
@@ -32,7 +32,7 @@ WebApi → Application ← Infrastructure
 ### Feature-Based Organization
 Code is organized by feature rather than technical concern:
 ```
-src/MyProject.{Layer}/Features/{FeatureName}/
+src/Recipes.{Layer}/Features/{FeatureName}/
 ├── Dtos/
 ├── Services/
 ├── Configurations/
@@ -52,7 +52,7 @@ src/MyProject.{Layer}/Features/{FeatureName}/
 - Mark internal implementations as `internal`
 
 ### Result Pattern
-Use `Result` and `Result<T>` from `MyProject.Domain` for operation outcomes:
+Use `Result` and `Result<T>` from `Recipes.Domain` for operation outcomes:
 ```csharp
 // Success with value
 return Result<Guid>.Success(user.Id);
@@ -68,8 +68,8 @@ return Result.Failure("Invalid credentials.");
 - Use meaningful XML comments for OpenAPI documentation
 
 ### Service Interfaces
-- Define interfaces in Application layer: `src/MyProject.Application/Features/{Feature}/I{Service}.cs`
-- Implement in Infrastructure layer: `src/MyProject.Infrastructure/Features/{Feature}/Services/{Service}.cs`
+- Define interfaces in Application layer: `src/Recipes.Application/Features/{Feature}/I{Service}.cs`
+- Implement in Infrastructure layer: `src/Recipes.Infrastructure/Features/{Feature}/Services/{Service}.cs`
 - Register via extension methods in `ServiceCollectionExtensions.cs`
 
 ### DTOs
@@ -78,7 +78,7 @@ return Result.Failure("Invalid credentials.");
 - Use mapping methods or mappers to convert between layers
 
 ### Entity Framework
-- DbContext: `MyProjectDbContext` in Infrastructure layer
+- DbContext: `RecipesDbContext` in Infrastructure layer
 - Configurations: Use `IEntityTypeConfiguration<T>` pattern
 - Migrations output: `Features/Postgres/Migrations/`
 - Entities extend `BaseEntity` with soft delete support
@@ -166,7 +166,7 @@ chmod +x init.sh
 4. **Updates configuration files**:
    - `appsettings.Development.json` (DB connection)
    - `http-client.env.json` (API URL for testing)
-5. **Renames all files, directories, and namespaces** from `MyProject` to your project name
+5. **Renames all files, directories, and namespaces** from `Recipes` to your project name
 6. **Offers to commit** the rename changes
 7. **Offers to create fresh Initial migration**:
    - Removes existing migrations
@@ -191,7 +191,7 @@ docker compose -f docker-compose.local.yml up -d
 
 ### Migrations
 ```bash
-dotnet ef migrations add <Name> --project src/MyProject.Infrastructure --startup-project src/MyProject.WebApi --output-dir Features/Postgres/Migrations
+dotnet ef migrations add <Name> --project src/Recipes.Infrastructure --startup-project src/Recipes.WebApi --output-dir Features/Postgres/Migrations
 ```
 
 ### API Documentation

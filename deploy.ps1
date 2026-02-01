@@ -189,7 +189,7 @@ function Get-Config {
         Write-Warning "Config file not found. Creating default..."
         
         # Try to detect project name
-        $detectedName = "MyProject"
+        $detectedName = "Recipes"
         $webApiDir = Get-ChildItem -Path "src\backend" -Directory -Filter "*.WebApi" -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($webApiDir) {
             $detectedName = $webApiDir.Name -replace '\.WebApi$', ''

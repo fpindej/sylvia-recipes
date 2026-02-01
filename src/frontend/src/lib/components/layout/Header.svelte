@@ -28,7 +28,7 @@
 			<nav class="grid gap-2 text-lg font-medium">
 				<a href={resolve('/')} class="flex items-center gap-2 text-lg font-semibold">
 					<Package2 class="h-6 w-6" />
-					<span class="sr-only">MyProject</span>
+					<span class="sr-only">Recipes</span>
 				</a>
 				<SidebarNav onNavigate={() => (open = false)} />
 			</nav>

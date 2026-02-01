@@ -1,4 +1,4 @@
-# Agent Guidelines for MyProject Web API
+# Agent Guidelines for Recipes Web API
 
 This document provides AI agents with context about the codebase structure, conventions, and best practices.
 
@@ -20,18 +20,18 @@ This document provides AI agents with context about the codebase structure, conv
 ```
 src/
 ├── backend/
-│   ├── MyProject.Domain/           # Core domain entities, value objects
+│   ├── Recipes.Domain/           # Core domain entities, value objects
 │   │   ├── Entities/               # Base entities with soft delete
 │   │   └── Result.cs               # Result pattern implementation
 │   │
-│   ├── MyProject.Application/      # Application contracts
+│   ├── Recipes.Application/      # Application contracts
 │   │   ├── Features/               # Feature-based organization
 │   │   │   └── {Feature}/
 │   │   │       ├── I{Service}.cs   # Service interface
 │   │   │       └── Dtos/           # Input/Output DTOs
 │   │   └── Persistence/            # Repository interfaces
 │   │
-│   ├── MyProject.Infrastructure/   # Implementation layer
+│   ├── Recipes.Infrastructure/   # Implementation layer
 │   │   ├── Features/
 │   │   │   └── {Feature}/
 │   │   │       ├── Services/       # Service implementations
@@ -40,12 +40,12 @@ src/
 │   │   │       ├── Extensions/     # DI registration
 │   │   │       └── Options/        # Configuration options
 │   │   ├── Persistence/
-│   │   │   ├── MyProjectDbContext.cs
+│   │   │   ├── RecipesDbContext.cs
 │   │   │   ├── Extensions/         # EF helpers, query extensions
 │   │   │   └── Configurations/     # Shared EF configurations
 │   │   └── Logging/                # Serilog configuration
 │   │
-│   └── MyProject.WebApi/           # API entry point
+│   └── Recipes.WebApi/           # API entry point
 │       ├── Features/
 │       │   └── {Feature}/
 │       │       ├── {Feature}Controller.cs
@@ -196,7 +196,7 @@ public class MyController(IMyService service) : ControllerBase
 ### Adding a New Entity
 
 1. **Create entity** in `Domain/Entities/` extending `BaseEntity`
-2. **Add DbSet** to `MyProjectDbContext`
+2. **Add DbSet** to `RecipesDbContext`
 3. **Create configuration** in `Infrastructure/Features/{Feature}/Configurations/`
 4. **Add migration**: `dotnet ef migrations add AddNewEntity ...`
 
@@ -326,7 +326,7 @@ chmod +x init.sh
 | `appsettings.Development.json` | Database connection port |
 | `http-client.env.json` | API base URL |
 | All `*.cs`, `*.csproj`, `*.sln` files | Namespace/project references |
-| All directories containing `MyProject` | Renamed to new project name |
+| All directories containing `Recipes` | Renamed to new project name |
 
 ## Important Files
 
@@ -334,7 +334,7 @@ chmod +x init.sh
 |------|---------|
 | `init.ps1` / `init.sh` | Project initialization and renaming scripts |
 | `Program.cs` | Application startup and middleware pipeline |
-| `MyProjectDbContext.cs` | EF Core DbContext with role seeding |
+| `RecipesDbContext.cs` | EF Core DbContext with role seeding |
 | `AuthenticationService.cs` | JWT/cookie auth implementation |
 | `ExceptionHandlingMiddleware.cs` | Global error handling |
 | `Result.cs` | Result pattern for error handling |

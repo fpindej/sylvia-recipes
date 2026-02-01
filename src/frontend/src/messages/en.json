@@ -1,9 +1,9 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
-	"app_name": "MyProject",
+	"app_name": "Recipes",
 
-	"meta_titleTemplate": "{title} | MyProject",
+	"meta_titleTemplate": "{title} | Recipes",
 	"meta_description": "A production-ready web application template.",
 	"meta_login_title": "Login",
 	"meta_login_description": "Sign in to your account.",
