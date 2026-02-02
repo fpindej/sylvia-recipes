@@ -60,21 +60,21 @@
 	<RecipeFilters filters={data.filters} onfilterchange={handleFilterChange} />
 
 	<!-- Recipe grid -->
-	{#if data.recipes.length > 0}
+	{#if data.recipes && data.recipes.length > 0}
 		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 			{#each data.recipes as recipe (recipe.id)}
-				<RecipeCard {recipe} onclick={() => handleRecipeClick(recipe.id)} />
+				<RecipeCard {recipe} onclick={() => recipe.id && handleRecipeClick(recipe.id)} />
 			{/each}
 		</div>
 
 		<!-- Pagination -->
-		{#if data.pagination.totalPages > 1}
+		{#if (data.pagination.totalPages ?? 0) > 1}
 			<div class="flex items-center justify-center gap-2">
 				<Button
 					variant="outline"
 					size="sm"
 					disabled={!data.pagination.hasPreviousPage}
-					onclick={() => goToPage(data.pagination.pageNumber - 1)}
+					onclick={() => goToPage((data.pagination.pageNumber ?? 1) - 1)}
 				>
 					Previous
 				</Button>
@@ -85,7 +85,7 @@
 					variant="outline"
 					size="sm"
 					disabled={!data.pagination.hasNextPage}
-					onclick={() => goToPage(data.pagination.pageNumber + 1)}
+					onclick={() => goToPage((data.pagination.pageNumber ?? 1) + 1)}
 				>
 					Next
 				</Button>

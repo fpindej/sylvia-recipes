@@ -4,9 +4,9 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		type RecipeFilters,
-		WorkspaceNeeded,
-		TimeCategory,
-		Messiness,
+		WorkspaceNeededValues,
+		TimeCategoryValues,
+		MessinessValues,
 		timeCategoryLabels,
 		workspaceNeededLabels,
 		messinessLabels
@@ -50,15 +50,15 @@
 		onfilterchange({ ...filters, isTried: newValue, pageNumber: 1 });
 	}
 
-	function setTimeCategory(value: TimeCategory | undefined) {
+	function setTimeCategory(value: number | undefined) {
 		onfilterchange({ ...filters, timeCategory: value, pageNumber: 1 });
 	}
 
-	function setWorkspaceNeeded(value: WorkspaceNeeded | undefined) {
+	function setWorkspaceNeeded(value: number | undefined) {
 		onfilterchange({ ...filters, workspaceNeeded: value, pageNumber: 1 });
 	}
 
-	function setMessiness(value: Messiness | undefined) {
+	function setMessiness(value: number | undefined) {
 		onfilterchange({ ...filters, messiness: value, pageNumber: 1 });
 	}
 

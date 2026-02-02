@@ -1,113 +1,52 @@
 /**
  * Recipe-related types for the frontend.
- * These match the backend API response schemas.
+ * Re-exports types from generated API and adds helper utilities.
  */
 
-export enum WorkspaceNeeded {
-	Small = 0,
-	Medium = 1,
-	Large = 2
-}
+import type { components } from '$lib/api/v1';
 
-export enum TimeCategory {
-	Quick = 0,
-	Medium = 1,
-	Long = 2,
-	Overnight = 3
-}
+// Re-export types from generated API
+export type Recipe = components['schemas']['RecipeResponse'];
+export type RecipeListResponse = components['schemas']['RecipeListResponse'];
+export type CreateRecipeRequest = components['schemas']['CreateRecipeRequest'];
+export type UpdateRecipeRequest = components['schemas']['UpdateRecipeRequest'];
+export type Tag = components['schemas']['TagResponse'];
+export type Equipment = components['schemas']['EquipmentResponse'];
+export type TagRequest = components['schemas']['TagRequest'];
 
-export enum Messiness {
-	Low = 0,
-	Medium = 1,
-	High = 2
-}
+// Enum types (these match the backend enum values)
+export type WorkspaceNeeded = components['schemas']['WorkspaceNeeded'];
+export type TimeCategory = components['schemas']['TimeCategory'];
+export type Messiness = components['schemas']['Messiness'];
+export type TagType = components['schemas']['TagType']; // String enum: "Cuisine", "Type", "Custom"
 
-export enum TagType {
-	Cuisine = 0,
-	Type = 1,
-	Custom = 2
-}
+// Enum values for use in code
+// WorkspaceNeeded, TimeCategory, Messiness are numbers from backend
+export const WorkspaceNeededValues = {
+	Small: 0,
+	Medium: 1,
+	Large: 2
+} as const;
 
-export interface Tag {
-	id: string;
-	name: string;
-	tagType: TagType;
-}
+export const TimeCategoryValues = {
+	Quick: 0,
+	Medium: 1,
+	Long: 2,
+	Overnight: 3
+} as const;
 
-export interface Equipment {
-	id: string;
-	name: string;
-}
+export const MessinessValues = {
+	Low: 0,
+	Medium: 1,
+	High: 2
+} as const;
 
-export interface Recipe {
-	id: string;
-	title: string;
-	instructions: string;
-	description?: string | null;
-	prepTimeMinutes?: number | null;
-	cookTimeMinutes?: number | null;
-	servings?: number | null;
-	proteinGrams?: number | null;
-	isTried: boolean;
-	sourceUrl?: string | null;
-	imageUrl?: string | null;
-	notes?: string | null;
-	workspaceNeeded?: WorkspaceNeeded | null;
-	timeCategory?: TimeCategory | null;
-	messiness?: Messiness | null;
-	tags: Tag[];
-	equipment: Equipment[];
-	createdAt: string;
-	updatedAt?: string | null;
-}
-
-export interface RecipeListResponse {
-	items: Recipe[];
-	totalCount: number;
-	pageNumber: number;
-	pageSize: number;
-	totalPages: number;
-	hasPreviousPage: boolean;
-	hasNextPage: boolean;
-}
-
-export interface CreateRecipeRequest {
-	title: string;
-	instructions: string;
-	description?: string | null;
-	prepTimeMinutes?: number | null;
-	cookTimeMinutes?: number | null;
-	servings?: number | null;
-	proteinGrams?: number | null;
-	isTried?: boolean;
-	sourceUrl?: string | null;
-	imageUrl?: string | null;
-	notes?: string | null;
-	workspaceNeeded?: WorkspaceNeeded | null;
-	timeCategory?: TimeCategory | null;
-	messiness?: Messiness | null;
-	tags?: { name: string; tagType: TagType }[] | null;
-	equipmentNames?: string[] | null;
-}
-
-export interface UpdateRecipeRequest {
-	title?: string | null;
-	instructions?: string | null;
-	description?: string | null;
-	prepTimeMinutes?: number | null;
-	cookTimeMinutes?: number | null;
-	servings?: number | null;
-	proteinGrams?: number | null;
-	isTried?: boolean | null;
-	sourceUrl?: string | null;
-	imageUrl?: string | null;
-	notes?: string | null;
-	workspaceNeeded?: WorkspaceNeeded | null;
-	timeCategory?: TimeCategory | null;
-	messiness?: Messiness | null;
-	tags?: { name: string; tagType: TagType }[] | null;
-	equipmentNames?: string[] | null;
-}
+// TagType is a string enum from backend
+export const TagTypeStrings = {
+	Cuisine: 'Cuisine',
+	Type: 'Type',
+	Custom: 'Custom'
+} as const;
 
 export interface RecipeFilters {
 	searchTerm?: string;
@@ -115,36 +54,36 @@ export interface RecipeFilters {
 	cuisines?: string;
 	types?: string;
 	equipment?: string;
-	workspaceNeeded?: WorkspaceNeeded;
-	timeCategory?: TimeCategory;
-	messiness?: Messiness;
+	workspaceNeeded?: number;
+	timeCategory?: number;
+	messiness?: number;
 	minProteinGrams?: number;
 	pageNumber?: number;
 	pageSize?: number;
 }
 
 // Helper functions for enum display
-export const workspaceNeededLabels: Record<WorkspaceNeeded, string> = {
-	[WorkspaceNeeded.Small]: 'Small',
-	[WorkspaceNeeded.Medium]: 'Medium',
-	[WorkspaceNeeded.Large]: 'Large'
+export const workspaceNeededLabels: Record<number, string> = {
+	[WorkspaceNeededValues.Small]: 'Small',
+	[WorkspaceNeededValues.Medium]: 'Medium',
+	[WorkspaceNeededValues.Large]: 'Large'
 };
 
-export const timeCategoryLabels: Record<TimeCategory, string> = {
-	[TimeCategory.Quick]: 'Quick (≤30 min)',
-	[TimeCategory.Medium]: 'Medium (1-3 hrs)',
-	[TimeCategory.Long]: 'Long (3+ hrs)',
-	[TimeCategory.Overnight]: 'Overnight'
+export const timeCategoryLabels: Record<number, string> = {
+	[TimeCategoryValues.Quick]: 'Quick (≤30 min)',
+	[TimeCategoryValues.Medium]: 'Medium (1-3 hrs)',
+	[TimeCategoryValues.Long]: 'Long (3+ hrs)',
+	[TimeCategoryValues.Overnight]: 'Overnight'
 };
 
-export const messinessLabels: Record<Messiness, string> = {
-	[Messiness.Low]: 'Low',
-	[Messiness.Medium]: 'Medium',
-	[Messiness.High]: 'High'
+export const messinessLabels: Record<number, string> = {
+	[MessinessValues.Low]: 'Low',
+	[MessinessValues.Medium]: 'Medium',
+	[MessinessValues.High]: 'High'
 };
 
-export const tagTypeLabels: Record<TagType, string> = {
-	[TagType.Cuisine]: 'Cuisine',
-	[TagType.Type]: 'Type',
-	[TagType.Custom]: 'Custom'
+export const tagTypeLabels: Record<string, string> = {
+	Cuisine: 'Cuisine',
+	Type: 'Type',
+	Custom: 'Custom'
 };

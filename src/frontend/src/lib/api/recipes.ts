@@ -1,15 +1,27 @@
 import { createApiClient } from './client';
-import type {
-	Recipe,
-	RecipeListResponse,
-	CreateRecipeRequest,
-	UpdateRecipeRequest,
-	RecipeFilters,
-	Tag,
-	Equipment
-} from '$lib/types/recipe';
+import type { components } from './v1';
 
-const API_BASE = '/api/v1/recipes';
+// Re-export types from generated API for convenience
+export type Recipe = components['schemas']['RecipeResponse'];
+export type RecipeListResponse = components['schemas']['RecipeListResponse'];
+export type CreateRecipeRequest = components['schemas']['CreateRecipeRequest'];
+export type UpdateRecipeRequest = components['schemas']['UpdateRecipeRequest'];
+export type Tag = components['schemas']['TagResponse'];
+export type Equipment = components['schemas']['EquipmentResponse'];
+
+export interface RecipeFilters {
+	searchTerm?: string;
+	isTried?: boolean;
+	cuisines?: string;
+	types?: string;
+	equipment?: string;
+	workspaceNeeded?: number;
+	timeCategory?: number;
+	messiness?: number;
+	minProteinGrams?: number;
+	pageNumber?: number;
+	pageSize?: number;
+}
 
 /**
  * Fetches a paginated and filtered list of recipes.
@@ -19,71 +31,67 @@ export async function getRecipes(
 	customFetch?: typeof fetch
 ): Promise<RecipeListResponse> {
 	const client = createApiClient(customFetch);
-	const params = new URLSearchParams();
 
-	if (filters.searchTerm) params.set('searchTerm', filters.searchTerm);
-	if (filters.isTried !== undefined) params.set('isTried', String(filters.isTried));
-	if (filters.cuisines) params.set('cuisines', filters.cuisines);
-	if (filters.types) params.set('types', filters.types);
-	if (filters.equipment) params.set('equipment', filters.equipment);
-	if (filters.workspaceNeeded !== undefined)
-		params.set('workspaceNeeded', String(filters.workspaceNeeded));
-	if (filters.timeCategory !== undefined) params.set('timeCategory', String(filters.timeCategory));
-	if (filters.messiness !== undefined) params.set('messiness', String(filters.messiness));
-	if (filters.minProteinGrams !== undefined)
-		params.set('minProteinGrams', String(filters.minProteinGrams));
-	if (filters.pageNumber) params.set('pageNumber', String(filters.pageNumber));
-	if (filters.pageSize) params.set('pageSize', String(filters.pageSize));
-
-	const url = `${API_BASE}?${params.toString()}`;
-	const response = await (customFetch || fetch)(url, {
-		method: 'GET',
-		credentials: 'include'
+	const { data, error, response } = await client.GET('/api/v1/recipes', {
+		params: {
+			query: {
+				SearchTerm: filters.searchTerm,
+				IsTried: filters.isTried,
+				Cuisines: filters.cuisines,
+				Types: filters.types,
+				Equipment: filters.equipment,
+				WorkspaceNeeded: filters.workspaceNeeded,
+				TimeCategory: filters.timeCategory,
+				Messiness: filters.messiness,
+				MinProteinGrams: filters.minProteinGrams,
+				PageNumber: filters.pageNumber,
+				PageSize: filters.pageSize
+			}
+		}
 	});
 
-	if (!response.ok) {
+	if (!response.ok || error) {
 		throw new Error(`Failed to fetch recipes: ${response.statusText}`);
 	}
 
-	return response.json();
+	return data ?? { items: [], totalCount: 0, pageNumber: 1, pageSize: 12, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
 }
 
 /**
  * Fetches a single recipe by ID.
  */
 export async function getRecipe(id: string, customFetch?: typeof fetch): Promise<Recipe> {
-	const response = await (customFetch || fetch)(`${API_BASE}/${id}`, {
-		method: 'GET',
-		credentials: 'include'
+	const client = createApiClient(customFetch);
+
+	const { data, error, response } = await client.GET('/api/v1/recipes/{id}', {
+		params: { path: { id } }
 	});
 
-	if (!response.ok) {
+	if (!response.ok || error) {
 		throw new Error(`Failed to fetch recipe: ${response.statusText}`);
 	}
 
-	return response.json();
+	return data!;
 }
 
 /**
  * Creates a new recipe.
  */
 export async function createRecipe(
-	data: CreateRecipeRequest,
+	request: CreateRecipeRequest,
 	customFetch?: typeof fetch
 ): Promise<string> {
-	const response = await (customFetch || fetch)(API_BASE, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify(data)
+	const client = createApiClient(customFetch);
+
+	const { data, error, response } = await client.POST('/api/v1/recipes', {
+		body: request
 	});
 
-	if (!response.ok) {
-		const error = await response.text();
-		throw new Error(`Failed to create recipe: ${error}`);
+	if (!response.ok || error) {
+		throw new Error(`Failed to create recipe: ${response.statusText}`);
 	}
 
-	return response.json();
+	return data!;
 }
 
 /**
@@ -91,19 +99,18 @@ export async function createRecipe(
  */
 export async function updateRecipe(
 	id: string,
-	data: UpdateRecipeRequest,
+	request: UpdateRecipeRequest,
 	customFetch?: typeof fetch
 ): Promise<void> {
-	const response = await (customFetch || fetch)(`${API_BASE}/${id}`, {
-		method: 'PUT',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify(data)
+	const client = createApiClient(customFetch);
+
+	const { error, response } = await client.PUT('/api/v1/recipes/{id}', {
+		params: { path: { id } },
+		body: request
 	});
 
-	if (!response.ok) {
-		const error = await response.text();
-		throw new Error(`Failed to update recipe: ${error}`);
+	if (!response.ok || error) {
+		throw new Error(`Failed to update recipe: ${response.statusText}`);
 	}
 }
 
@@ -111,12 +118,13 @@ export async function updateRecipe(
  * Deletes a recipe (soft delete).
  */
 export async function deleteRecipe(id: string, customFetch?: typeof fetch): Promise<void> {
-	const response = await (customFetch || fetch)(`${API_BASE}/${id}`, {
-		method: 'DELETE',
-		credentials: 'include'
+	const client = createApiClient(customFetch);
+
+	const { error, response } = await client.DELETE('/api/v1/recipes/{id}', {
+		params: { path: { id } }
 	});
 
-	if (!response.ok) {
+	if (!response.ok || error) {
 		throw new Error(`Failed to delete recipe: ${response.statusText}`);
 	}
 }
@@ -125,12 +133,13 @@ export async function deleteRecipe(id: string, customFetch?: typeof fetch): Prom
  * Marks a recipe as tried.
  */
 export async function markRecipeAsTried(id: string, customFetch?: typeof fetch): Promise<void> {
-	const response = await (customFetch || fetch)(`${API_BASE}/${id}/tried`, {
-		method: 'POST',
-		credentials: 'include'
+	const client = createApiClient(customFetch);
+
+	const { error, response } = await client.POST('/api/v1/recipes/{id}/tried', {
+		params: { path: { id } }
 	});
 
-	if (!response.ok) {
+	if (!response.ok || error) {
 		throw new Error(`Failed to mark recipe as tried: ${response.statusText}`);
 	}
 }
@@ -139,12 +148,13 @@ export async function markRecipeAsTried(id: string, customFetch?: typeof fetch):
  * Marks a recipe as not tried.
  */
 export async function markRecipeAsNotTried(id: string, customFetch?: typeof fetch): Promise<void> {
-	const response = await (customFetch || fetch)(`${API_BASE}/${id}/tried`, {
-		method: 'DELETE',
-		credentials: 'include'
+	const client = createApiClient(customFetch);
+
+	const { error, response } = await client.DELETE('/api/v1/recipes/{id}/tried', {
+		params: { path: { id } }
 	});
 
-	if (!response.ok) {
+	if (!response.ok || error) {
 		throw new Error(`Failed to mark recipe as not tried: ${response.statusText}`);
 	}
 }
@@ -152,36 +162,29 @@ export async function markRecipeAsNotTried(id: string, customFetch?: typeof fetc
 /**
  * Fetches all tags for autocomplete.
  */
-export async function getTags(searchTerm?: string, customFetch?: typeof fetch): Promise<Tag[]> {
-	const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
-	const response = await (customFetch || fetch)(`${API_BASE}/tags${params}`, {
-		method: 'GET',
-		credentials: 'include'
-	});
+export async function getTags(customFetch?: typeof fetch): Promise<Tag[]> {
+	const client = createApiClient(customFetch);
 
-	if (!response.ok) {
+	const { data, error, response } = await client.GET('/api/v1/recipes/tags');
+
+	if (!response.ok || error) {
 		throw new Error(`Failed to fetch tags: ${response.statusText}`);
 	}
 
-	return response.json();
+	return data ?? [];
 }
 
 /**
  * Fetches all equipment for autocomplete.
  */
-export async function getEquipment(
-	searchTerm?: string,
-	customFetch?: typeof fetch
-): Promise<Equipment[]> {
-	const params = searchTerm ? `?searchTerm=${encodeURIComponent(searchTerm)}` : '';
-	const response = await (customFetch || fetch)(`${API_BASE}/equipment${params}`, {
-		method: 'GET',
-		credentials: 'include'
-	});
+export async function getEquipment(customFetch?: typeof fetch): Promise<Equipment[]> {
+	const client = createApiClient(customFetch);
 
-	if (!response.ok) {
+	const { data, error, response } = await client.GET('/api/v1/recipes/equipment');
+
+	if (!response.ok || error) {
 		throw new Error(`Failed to fetch equipment: ${response.statusText}`);
 	}
 
-	return response.json();
+	return data ?? [];
 }

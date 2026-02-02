@@ -104,6 +104,401 @@ export interface paths {
 		};
 		trace?: never;
 	};
+	'/api/v1/recipes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Gets a filtered and paginated list of recipes. */
+		get: {
+			parameters: {
+				query?: {
+					/** @description Search term for full-text search on title and description. */
+					SearchTerm?: string;
+					/** @description Filter by tried status. */
+					IsTried?: boolean;
+					/** @description Filter by cuisine tags (comma-separated). */
+					Cuisines?: string;
+					/** @description Filter by type tags (comma-separated). */
+					Types?: string;
+					/** @description Filter by equipment names (comma-separated). */
+					Equipment?: string;
+					/** @description Filter by workspace needed. */
+					WorkspaceNeeded?: components['schemas']['WorkspaceNeeded'];
+					/** @description Filter by time category. */
+					TimeCategory?: components['schemas']['TimeCategory'];
+					/** @description Filter by messiness level. */
+					Messiness?: components['schemas']['Messiness'];
+					/** @description Filter by minimum protein grams. */
+					MinProteinGrams?: number;
+					PageNumber?: number;
+					PageSize?: number;
+				};
+				header?: never;
+				path?: never;
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Returns the list of recipes. */
+				200: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['RecipeListResponse'];
+						'application/json': components['schemas']['RecipeListResponse'];
+						'text/json': components['schemas']['RecipeListResponse'];
+					};
+				};
+			};
+		};
+		put?: never;
+		/** Creates a new recipe. */
+		post: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path?: never;
+				cookie?: never;
+			};
+			/** @description Cancellation token. */
+			requestBody: {
+				content: {
+					'application/json': components['schemas']['CreateRecipeRequest'];
+					'text/json': components['schemas']['CreateRecipeRequest'];
+					'application/*+json': components['schemas']['CreateRecipeRequest'];
+				};
+			};
+			responses: {
+				/** @description Returns the created recipe's ID. */
+				201: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': string;
+						'application/json': string;
+						'text/json': string;
+					};
+				};
+				/** @description If the request is invalid. */
+				400: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/recipes/{id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Gets a recipe by ID. */
+		get: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path: {
+					/** @description The recipe ID. */
+					id: string;
+				};
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Returns the recipe. */
+				200: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['RecipeResponse'];
+						'application/json': components['schemas']['RecipeResponse'];
+						'text/json': components['schemas']['RecipeResponse'];
+					};
+				};
+				/** @description If the recipe is not found. */
+				404: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		/** Updates an existing recipe. */
+		put: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path: {
+					/** @description The recipe ID. */
+					id: string;
+				};
+				cookie?: never;
+			};
+			/** @description Cancellation token. */
+			requestBody: {
+				content: {
+					'application/json': components['schemas']['UpdateRecipeRequest'];
+					'text/json': components['schemas']['UpdateRecipeRequest'];
+					'application/*+json': components['schemas']['UpdateRecipeRequest'];
+				};
+			};
+			responses: {
+				/** @description Recipe updated successfully. */
+				204: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content?: never;
+				};
+				/** @description If the request is invalid. */
+				400: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+				/** @description If the recipe is not found. */
+				404: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		post?: never;
+		/** Deletes a recipe (soft delete). */
+		delete: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path: {
+					/** @description The recipe ID. */
+					id: string;
+				};
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Recipe deleted successfully. */
+				204: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content?: never;
+				};
+				/** @description If the recipe is not found. */
+				404: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/recipes/{id}/tried': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Marks a recipe as tried. */
+		post: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path: {
+					/** @description The recipe ID. */
+					id: string;
+				};
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Recipe marked as tried. */
+				204: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content?: never;
+				};
+				/** @description If the recipe is not found. */
+				404: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		/** Marks a recipe as not tried. */
+		delete: {
+			parameters: {
+				query?: never;
+				header?: never;
+				path: {
+					/** @description The recipe ID. */
+					id: string;
+				};
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Recipe marked as not tried. */
+				204: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content?: never;
+				};
+				/** @description If the recipe is not found. */
+				404: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['ProblemDetails'];
+						'application/json': components['schemas']['ProblemDetails'];
+						'text/json': components['schemas']['ProblemDetails'];
+					};
+				};
+			};
+		};
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/recipes/tags': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Gets all tags for autocomplete. */
+		get: {
+			parameters: {
+				query?: {
+					/** @description Optional search term to filter tags. */
+					searchTerm?: string;
+				};
+				header?: never;
+				path?: never;
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Returns the list of tags. */
+				200: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['TagResponse'][];
+						'application/json': components['schemas']['TagResponse'][];
+						'text/json': components['schemas']['TagResponse'][];
+					};
+				};
+			};
+		};
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/api/v1/recipes/equipment': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Gets all equipment for autocomplete. */
+		get: {
+			parameters: {
+				query?: {
+					/** @description Optional search term to filter equipment. */
+					searchTerm?: string;
+				};
+				header?: never;
+				path?: never;
+				cookie?: never;
+			};
+			requestBody?: never;
+			responses: {
+				/** @description Returns the list of equipment. */
+				200: {
+					headers: {
+						[name: string]: unknown;
+					};
+					content: {
+						'text/plain': components['schemas']['EquipmentResponse'][];
+						'application/json': components['schemas']['EquipmentResponse'][];
+						'text/json': components['schemas']['EquipmentResponse'][];
+					};
+				};
+			};
+		};
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	'/api/auth/login': {
 		parameters: {
 			query?: never;
@@ -302,6 +697,66 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
+		/** @description Request to create a new recipe. */
+		CreateRecipeRequest: {
+			/** @description The title of the recipe. */
+			title: string;
+			/** @description The step-by-step cooking instructions. */
+			instructions: string;
+			/** @description Optional description of the recipe. */
+			description?: null | string;
+			/**
+			 * Format: int32
+			 * @description Preparation time in minutes.
+			 */
+			prepTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Cooking time in minutes.
+			 */
+			cookTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Number of servings.
+			 */
+			servings?: null | number;
+			/**
+			 * Format: double
+			 * @description Protein content in grams.
+			 */
+			proteinGrams?: null | number;
+			/** @description Whether the recipe has been tried. */
+			isTried?: boolean;
+			/**
+			 * Format: uri
+			 * @description URL of the original source.
+			 */
+			sourceUrl?: null | string;
+			/**
+			 * Format: uri
+			 * @description URL of the recipe image.
+			 */
+			imageUrl?: null | string;
+			/** @description Personal notes about the recipe. */
+			notes?: null | string;
+			workspaceNeeded?: null | components['schemas']['WorkspaceNeeded'];
+			timeCategory?: null | components['schemas']['TimeCategory'];
+			messiness?: null | components['schemas']['Messiness'];
+			/** @description Tags to associate with the recipe. */
+			tags?: null | components['schemas']['TagRequest'][];
+			/** @description Equipment names needed for the recipe. */
+			equipmentNames?: null | string[];
+		};
+		/** @description Response containing equipment information. */
+		EquipmentResponse: {
+			/**
+			 * Format: uuid
+			 * @description The unique identifier of the equipment.
+			 */
+			id?: string;
+			/** @description The name of the equipment. */
+			name?: string;
+		};
 		/** @description Represents a user login request with credentials. */
 		LoginRequest: {
 			/** @description The username for authentication. */
@@ -309,6 +764,7 @@ export interface components {
 			/** @description The password for authentication. */
 			password: string;
 		};
+		Messiness: number;
 		ProblemDetails: {
 			type?: null | string;
 			title?: null | string;
@@ -316,6 +772,94 @@ export interface components {
 			status?: null | number;
 			detail?: null | string;
 			instance?: null | string;
+		};
+		/** @description Response containing a paginated list of recipes. */
+		RecipeListResponse: {
+			/** @description The list of recipes. */
+			items?: components['schemas']['RecipeResponse'][];
+			/**
+			 * Format: int32
+			 * @description The total number of items (across all pages).
+			 */
+			totalCount?: number;
+			/**
+			 * Format: int32
+			 * @description The current page number.
+			 */
+			pageNumber?: number;
+			/**
+			 * Format: int32
+			 * @description The number of items per page.
+			 */
+			pageSize?: number;
+			/**
+			 * Format: int32
+			 * @description The total number of pages.
+			 */
+			totalPages?: number;
+			/** @description Indicates if there is a previous page. */
+			hasPreviousPage?: boolean;
+			/** @description Indicates if there is a next page. */
+			hasNextPage?: boolean;
+		};
+		/** @description Response containing a single recipe. */
+		RecipeResponse: {
+			/**
+			 * Format: uuid
+			 * @description The unique identifier of the recipe.
+			 */
+			id?: string;
+			/** @description The title of the recipe. */
+			title?: string;
+			/** @description The step-by-step cooking instructions. */
+			instructions?: string;
+			/** @description Description of the recipe. */
+			description?: null | string;
+			/**
+			 * Format: int32
+			 * @description Preparation time in minutes.
+			 */
+			prepTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Cooking time in minutes.
+			 */
+			cookTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Number of servings.
+			 */
+			servings?: null | number;
+			/**
+			 * Format: double
+			 * @description Protein content in grams.
+			 */
+			proteinGrams?: null | number;
+			/** @description Whether the recipe has been tried. */
+			isTried?: boolean;
+			/** @description URL of the original source. */
+			sourceUrl?: null | string;
+			/** @description URL of the recipe image. */
+			imageUrl?: null | string;
+			/** @description Personal notes about the recipe. */
+			notes?: null | string;
+			workspaceNeeded?: null | components['schemas']['WorkspaceNeeded'];
+			timeCategory?: null | components['schemas']['TimeCategory'];
+			messiness?: null | components['schemas']['Messiness'];
+			/** @description Tags associated with the recipe. */
+			tags?: components['schemas']['TagResponse'][];
+			/** @description Equipment needed for the recipe. */
+			equipment?: components['schemas']['EquipmentResponse'][];
+			/**
+			 * Format: date-time
+			 * @description When the recipe was created.
+			 */
+			createdAt?: string;
+			/**
+			 * Format: date-time
+			 * @description When the recipe was last updated.
+			 */
+			updatedAt?: null | string;
 		};
 		/** @description Represents a request to register a new user account. */
 		RegisterRequest: {
@@ -329,6 +873,77 @@ export interface components {
 			firstName?: null | string;
 			/** @description The last name of the user. */
 			lastName?: null | string;
+		};
+		/** @description Request to create or reference a tag. */
+		TagRequest: {
+			/** @description The name of the tag. */
+			name: string;
+			/** @description The type of the tag. */
+			tagType: components['schemas']['TagType'];
+		};
+		/** @description Response containing tag information. */
+		TagResponse: {
+			/**
+			 * Format: uuid
+			 * @description The unique identifier of the tag.
+			 */
+			id?: string;
+			/** @description The name of the tag. */
+			name?: string;
+			/** @description The type of the tag. */
+			tagType?: components['schemas']['TagType'];
+		};
+		TagType: string;
+		TimeCategory: number;
+		/** @description Request to update an existing recipe. All fields are optional for partial updates. */
+		UpdateRecipeRequest: {
+			/** @description The title of the recipe. */
+			title?: null | string;
+			/** @description The step-by-step cooking instructions. */
+			instructions?: null | string;
+			/** @description Description of the recipe. */
+			description?: null | string;
+			/**
+			 * Format: int32
+			 * @description Preparation time in minutes.
+			 */
+			prepTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Cooking time in minutes.
+			 */
+			cookTimeMinutes?: null | number;
+			/**
+			 * Format: int32
+			 * @description Number of servings.
+			 */
+			servings?: null | number;
+			/**
+			 * Format: double
+			 * @description Protein content in grams.
+			 */
+			proteinGrams?: null | number;
+			/** @description Whether the recipe has been tried. */
+			isTried?: null | boolean;
+			/**
+			 * Format: uri
+			 * @description URL of the original source.
+			 */
+			sourceUrl?: null | string;
+			/**
+			 * Format: uri
+			 * @description URL of the recipe image.
+			 */
+			imageUrl?: null | string;
+			/** @description Personal notes about the recipe. */
+			notes?: null | string;
+			workspaceNeeded?: null | components['schemas']['WorkspaceNeeded'];
+			timeCategory?: null | components['schemas']['TimeCategory'];
+			messiness?: null | components['schemas']['Messiness'];
+			/** @description Tags to associate with the recipe (replaces existing tags). */
+			tags?: null | components['schemas']['TagRequest'][];
+			/** @description Equipment names needed for the recipe (replaces existing equipment). */
+			equipmentNames?: null | string[];
 		};
 		/** @description Represents a request to update the user's profile information. */
 		UpdateUserRequest: {
@@ -370,6 +985,7 @@ export interface components {
 			/** @description The roles assigned to the user. */
 			roles?: string[];
 		};
+		WorkspaceNeeded: number;
 	};
 	responses: never;
 	parameters: never;
