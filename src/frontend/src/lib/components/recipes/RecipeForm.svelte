@@ -10,6 +10,10 @@
 		type Recipe,
 		type CreateRecipeRequest,
 		type UpdateRecipeRequest,
+		type WorkspaceNeeded,
+		type TimeCategory,
+		type Messiness,
+		type TagType,
 		workspaceNeededLabels,
 		timeCategoryLabels,
 		messinessLabels
@@ -42,10 +46,12 @@
 		workspaceNeeded: recipe?.workspaceNeeded ?? null,
 		timeCategory: recipe?.timeCategory ?? null,
 		messiness: recipe?.messiness ?? null,
-		cuisineTags: (recipe?.tags ?? []).filter(t => t.tagType === 'Cuisine').map(t => t.name ?? ''),
-		typeTags: (recipe?.tags ?? []).filter(t => t.tagType === 'Type').map(t => t.name ?? ''),
-		customTags: (recipe?.tags ?? []).filter(t => t.tagType === 'Custom').map(t => t.name ?? ''),
-		equipment: (recipe?.equipment ?? []).map(e => e.name ?? '')
+		cuisineTags: (recipe?.tags ?? [])
+			.filter((t) => t.tagType === 'Cuisine')
+			.map((t) => t.name ?? ''),
+		typeTags: (recipe?.tags ?? []).filter((t) => t.tagType === 'Type').map((t) => t.name ?? ''),
+		customTags: (recipe?.tags ?? []).filter((t) => t.tagType === 'Custom').map((t) => t.name ?? ''),
+		equipment: (recipe?.equipment ?? []).map((e) => e.name ?? '')
 	};
 
 	// Form state
@@ -60,9 +66,9 @@
 	let sourceUrl = $state(initialValues.sourceUrl);
 	let imageUrl = $state(initialValues.imageUrl);
 	let notes = $state(initialValues.notes);
-	let workspaceNeeded = $state<string | null>(initialValues.workspaceNeeded ?? null);
-	let timeCategory = $state<string | null>(initialValues.timeCategory ?? null);
-	let messiness = $state<string | null>(initialValues.messiness ?? null);
+	let workspaceNeeded = $state<WorkspaceNeeded>(initialValues.workspaceNeeded ?? null);
+	let timeCategory = $state<TimeCategory>(initialValues.timeCategory ?? null);
+	let messiness = $state<Messiness>(initialValues.messiness ?? null);
 
 	// Tags state
 	let cuisineTags = $state<string[]>(initialValues.cuisineTags);
@@ -86,9 +92,9 @@
 	onMount(async () => {
 		try {
 			const [tagsData, equipmentData] = await Promise.all([getTags(), getEquipment()]);
-			allTags = tagsData.map(t => ({ name: t.name ?? '', tagType: t.tagType ?? '' }));
-			allEquipment = equipmentData.map(e => e.name ?? '');
-		} catch (e) {
+			allTags = tagsData.map((t) => ({ name: t.name ?? '', tagType: t.tagType ?? '' }));
+			allEquipment = equipmentData.map((e) => e.name ?? '');
+		} catch {
 			// Silent fail for autocomplete
 		}
 	});
@@ -111,11 +117,11 @@
 
 	function removeTag(type: 'Cuisine' | 'Type' | 'Custom', tag: string) {
 		if (type === 'Cuisine') {
-			cuisineTags = cuisineTags.filter(t => t !== tag);
+			cuisineTags = cuisineTags.filter((t) => t !== tag);
 		} else if (type === 'Type') {
-			typeTags = typeTags.filter(t => t !== tag);
+			typeTags = typeTags.filter((t) => t !== tag);
 		} else {
-			customTags = customTags.filter(t => t !== tag);
+			customTags = customTags.filter((t) => t !== tag);
 		}
 	}
 
@@ -128,7 +134,7 @@
 	}
 
 	function removeEquipmentItem(item: string) {
-		equipment = equipment.filter(e => e !== item);
+		equipment = equipment.filter((e) => e !== item);
 	}
 
 	function handleKeyDown(event: KeyboardEvent, type: 'Cuisine' | 'Type' | 'Custom' | 'Equipment') {
@@ -137,7 +143,8 @@
 			if (type === 'Equipment') {
 				addEquipmentItem(newEquipment);
 			} else {
-				const value = type === 'Cuisine' ? newCuisineTag : type === 'Type' ? newTypeTag : newCustomTag;
+				const value =
+					type === 'Cuisine' ? newCuisineTag : type === 'Type' ? newTypeTag : newCustomTag;
 				addTag(type, value);
 			}
 		}
@@ -145,7 +152,7 @@
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		
+
 		if (!title.trim() || !instructions.trim()) {
 			toast.error('Title and instructions are required');
 			return;
@@ -153,10 +160,10 @@
 
 		isSubmitting = true;
 
-		const tags = [
-			...cuisineTags.map(name => ({ name, tagType: 'Cuisine' })),
-			...typeTags.map(name => ({ name, tagType: 'Type' })),
-			...customTags.map(name => ({ name, tagType: 'Custom' }))
+		const tags: { name: string; tagType: TagType }[] = [
+			...cuisineTags.map((name) => ({ name, tagType: 'Cuisine' as const })),
+			...typeTags.map((name) => ({ name, tagType: 'Type' as const })),
+			...customTags.map((name) => ({ name, tagType: 'Custom' as const }))
 		];
 
 		try {
@@ -182,6 +189,7 @@
 
 				const id = await createRecipe(request);
 				toast.success('Recipe created!');
+				// eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic route
 				goto(`/recipes/${id}`);
 			} else if (recipe?.id) {
 				const request: UpdateRecipeRequest = {
@@ -205,9 +213,10 @@
 
 				await updateRecipe(recipe.id, request);
 				toast.success('Recipe updated!');
+				// eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic route
 				goto(`/recipes/${recipe.id}`);
 			}
-		} catch (e) {
+		} catch {
 			toast.error(mode === 'create' ? 'Failed to create recipe' : 'Failed to update recipe');
 		} finally {
 			isSubmitting = false;
@@ -241,12 +250,23 @@
 
 				<div class="space-y-2">
 					<Label for="description">Description</Label>
-					<Textarea id="description" bind:value={description} placeholder="Brief description of the recipe" rows={2} />
+					<Textarea
+						id="description"
+						bind:value={description}
+						placeholder="Brief description of the recipe"
+						rows={2}
+					/>
 				</div>
 
 				<div class="space-y-2">
 					<Label for="instructions">Instructions *</Label>
-					<Textarea id="instructions" bind:value={instructions} placeholder="Step-by-step cooking instructions" rows={8} required />
+					<Textarea
+						id="instructions"
+						bind:value={instructions}
+						placeholder="Step-by-step cooking instructions"
+						rows={8}
+						required
+					/>
 				</div>
 			</Card.Content>
 		</Card.Root>
@@ -259,11 +279,23 @@
 			<Card.Content class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<div class="space-y-2">
 					<Label for="prepTime">Prep Time (min)</Label>
-					<Input id="prepTime" type="number" min="0" bind:value={prepTimeMinutes} placeholder="30" />
+					<Input
+						id="prepTime"
+						type="number"
+						min="0"
+						bind:value={prepTimeMinutes}
+						placeholder="30"
+					/>
 				</div>
 				<div class="space-y-2">
 					<Label for="cookTime">Cook Time (min)</Label>
-					<Input id="cookTime" type="number" min="0" bind:value={cookTimeMinutes} placeholder="45" />
+					<Input
+						id="cookTime"
+						type="number"
+						min="0"
+						bind:value={cookTimeMinutes}
+						placeholder="45"
+					/>
 				</div>
 				<div class="space-y-2">
 					<Label for="servings">Servings</Label>
@@ -271,7 +303,14 @@
 				</div>
 				<div class="space-y-2">
 					<Label for="protein">Protein (g)</Label>
-					<Input id="protein" type="number" min="0" step="0.1" bind:value={proteinGrams} placeholder="25" />
+					<Input
+						id="protein"
+						type="number"
+						min="0"
+						step="0.1"
+						bind:value={proteinGrams}
+						placeholder="25"
+					/>
 				</div>
 			</Card.Content>
 		</Card.Root>
@@ -286,13 +325,13 @@
 					<Label for="timeCategory">Time Category</Label>
 					<select
 						id="timeCategory"
-						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 						value={timeCategory ?? ''}
-						onchange={(e) => timeCategory = e.currentTarget.value || null}
+						onchange={(e) => (timeCategory = (e.currentTarget.value || null) as TimeCategory)}
 					>
 						<option value="">Select...</option>
-						{#each Object.entries(timeCategoryLabels) as [value, label]}
-							<option value={value}>{label}</option>
+						{#each Object.entries(timeCategoryLabels) as [value, label] (value)}
+							<option {value}>{label}</option>
 						{/each}
 					</select>
 				</div>
@@ -300,13 +339,13 @@
 					<Label for="workspaceNeeded">Workspace Needed</Label>
 					<select
 						id="workspaceNeeded"
-						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 						value={workspaceNeeded ?? ''}
-						onchange={(e) => workspaceNeeded = e.currentTarget.value || null}
+						onchange={(e) => (workspaceNeeded = (e.currentTarget.value || null) as WorkspaceNeeded)}
 					>
 						<option value="">Select...</option>
-						{#each Object.entries(workspaceNeededLabels) as [value, label]}
-							<option value={value}>{label}</option>
+						{#each Object.entries(workspaceNeededLabels) as [value, label] (value)}
+							<option {value}>{label}</option>
 						{/each}
 					</select>
 				</div>
@@ -314,13 +353,13 @@
 					<Label for="messiness">Messiness</Label>
 					<select
 						id="messiness"
-						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 						value={messiness ?? ''}
-						onchange={(e) => messiness = e.currentTarget.value || null}
+						onchange={(e) => (messiness = (e.currentTarget.value || null) as Messiness)}
 					>
 						<option value="">Select...</option>
-						{#each Object.entries(messinessLabels) as [value, label]}
-							<option value={value}>{label}</option>
+						{#each Object.entries(messinessLabels) as [value, label] (value)}
+							<option {value}>{label}</option>
 						{/each}
 					</select>
 				</div>
@@ -344,21 +383,29 @@
 							onkeydown={(e: KeyboardEvent) => handleKeyDown(e, 'Cuisine')}
 							list="cuisine-suggestions"
 						/>
-						<Button type="button" variant="outline" onclick={() => addTag('Cuisine', newCuisineTag)}>
+						<Button
+							type="button"
+							variant="outline"
+							onclick={() => addTag('Cuisine', newCuisineTag)}
+						>
 							<Plus class="h-4 w-4" />
 						</Button>
 					</div>
 					<datalist id="cuisine-suggestions">
-						{#each allTags.filter(t => t.tagType === 'Cuisine') as tag}
+						{#each allTags.filter((t) => t.tagType === 'Cuisine') as tag (tag.name)}
 							<option value={tag.name}></option>
 						{/each}
 					</datalist>
 					{#if cuisineTags.length > 0}
 						<div class="flex flex-wrap gap-2">
-							{#each cuisineTags as tag}
+							{#each cuisineTags as tag (tag)}
 								<Badge variant="secondary" class="gap-1">
 									{tag}
-									<button type="button" class="hover:text-destructive" onclick={() => removeTag('Cuisine', tag)}>
+									<button
+										type="button"
+										class="hover:text-destructive"
+										onclick={() => removeTag('Cuisine', tag)}
+									>
 										<X class="h-3 w-3" />
 									</button>
 								</Badge>
@@ -383,16 +430,20 @@
 						</Button>
 					</div>
 					<datalist id="type-suggestions">
-						{#each allTags.filter(t => t.tagType === 'Type') as tag}
+						{#each allTags.filter((t) => t.tagType === 'Type') as tag (tag.name)}
 							<option value={tag.name}></option>
 						{/each}
 					</datalist>
 					{#if typeTags.length > 0}
 						<div class="flex flex-wrap gap-2">
-							{#each typeTags as tag}
+							{#each typeTags as tag (tag)}
 								<Badge class="gap-1">
 									{tag}
-									<button type="button" class="hover:text-destructive" onclick={() => removeTag('Type', tag)}>
+									<button
+										type="button"
+										class="hover:text-destructive"
+										onclick={() => removeTag('Type', tag)}
+									>
 										<X class="h-3 w-3" />
 									</button>
 								</Badge>
@@ -417,16 +468,20 @@
 						</Button>
 					</div>
 					<datalist id="custom-suggestions">
-						{#each allTags.filter(t => t.tagType === 'Custom') as tag}
+						{#each allTags.filter((t) => t.tagType === 'Custom') as tag (tag.name)}
 							<option value={tag.name}></option>
 						{/each}
 					</datalist>
 					{#if customTags.length > 0}
 						<div class="flex flex-wrap gap-2">
-							{#each customTags as tag}
+							{#each customTags as tag (tag)}
 								<Badge variant="outline" class="gap-1">
 									{tag}
-									<button type="button" class="hover:text-destructive" onclick={() => removeTag('Custom', tag)}>
+									<button
+										type="button"
+										class="hover:text-destructive"
+										onclick={() => removeTag('Custom', tag)}
+									>
 										<X class="h-3 w-3" />
 									</button>
 								</Badge>
@@ -455,16 +510,20 @@
 					</Button>
 				</div>
 				<datalist id="equipment-suggestions">
-					{#each allEquipment as item}
+					{#each allEquipment as item (item)}
 						<option value={item}></option>
 					{/each}
 				</datalist>
 				{#if equipment.length > 0}
 					<div class="flex flex-wrap gap-2">
-						{#each equipment as item}
+						{#each equipment as item (item)}
 							<Badge variant="outline" class="gap-1">
 								{item}
-								<button type="button" class="hover:text-destructive" onclick={() => removeEquipmentItem(item)}>
+								<button
+									type="button"
+									class="hover:text-destructive"
+									onclick={() => removeEquipmentItem(item)}
+								>
 									<X class="h-3 w-3" />
 								</button>
 							</Badge>
@@ -482,15 +541,30 @@
 			<Card.Content class="space-y-4">
 				<div class="space-y-2">
 					<Label for="sourceUrl">Source URL</Label>
-					<Input id="sourceUrl" type="url" bind:value={sourceUrl} placeholder="https://example.com/recipe" />
+					<Input
+						id="sourceUrl"
+						type="url"
+						bind:value={sourceUrl}
+						placeholder="https://example.com/recipe"
+					/>
 				</div>
 				<div class="space-y-2">
 					<Label for="imageUrl">Image URL</Label>
-					<Input id="imageUrl" type="url" bind:value={imageUrl} placeholder="https://example.com/image.jpg" />
+					<Input
+						id="imageUrl"
+						type="url"
+						bind:value={imageUrl}
+						placeholder="https://example.com/image.jpg"
+					/>
 				</div>
 				<div class="space-y-2">
 					<Label for="notes">Personal Notes</Label>
-					<Textarea id="notes" bind:value={notes} placeholder="Any personal notes or modifications" rows={3} />
+					<Textarea
+						id="notes"
+						bind:value={notes}
+						placeholder="Any personal notes or modifications"
+						rows={3}
+					/>
 				</div>
 				<div class="flex items-center gap-2">
 					<input

@@ -1,5 +1,6 @@
 import { createApiClient } from './client';
 import type { components } from './v1';
+import type { RecipeFilters } from '$lib/types/recipe';
 
 // Re-export types from generated API for convenience
 export type Recipe = components['schemas']['RecipeResponse'];
@@ -9,19 +10,8 @@ export type UpdateRecipeRequest = components['schemas']['UpdateRecipeRequest'];
 export type Tag = components['schemas']['TagResponse'];
 export type Equipment = components['schemas']['EquipmentResponse'];
 
-export interface RecipeFilters {
-	searchTerm?: string;
-	isTried?: boolean;
-	cuisines?: string;
-	types?: string;
-	equipment?: string;
-	workspaceNeeded?: number;
-	timeCategory?: number;
-	messiness?: number;
-	minProteinGrams?: number;
-	pageNumber?: number;
-	pageSize?: number;
-}
+// Re-export RecipeFilters for backward compatibility
+export type { RecipeFilters } from '$lib/types/recipe';
 
 /**
  * Fetches a paginated and filtered list of recipes.
@@ -55,13 +45,27 @@ export async function getRecipes(
 		throw new Error(`Failed to fetch recipes: ${response.statusText}`);
 	}
 
-	return data ?? { items: [], totalCount: 0, pageNumber: 1, pageSize: 12, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
+	return (
+		data ?? {
+			items: [],
+			totalCount: 0,
+			pageNumber: 1,
+			pageSize: 12,
+			totalPages: 0,
+			hasPreviousPage: false,
+			hasNextPage: false
+		}
+	);
 }
 
 /**
  * Fetches a single recipe by ID.
  */
-export async function getRecipe(id: string, customFetch?: typeof fetch, origin?: string): Promise<Recipe> {
+export async function getRecipe(
+	id: string,
+	customFetch?: typeof fetch,
+	origin?: string
+): Promise<Recipe> {
 	const client = createApiClient(customFetch, origin);
 
 	const { data, error, response } = await client.GET('/api/v1/recipes/{id}', {

@@ -54,9 +54,9 @@ export interface RecipeFilters {
 	cuisines?: string;
 	types?: string;
 	equipment?: string;
-	workspaceNeeded?: string;
-	timeCategory?: string;
-	messiness?: string;
+	workspaceNeeded?: WorkspaceNeeded;
+	timeCategory?: TimeCategory;
+	messiness?: Messiness;
 	minProteinGrams?: number;
 	pageNumber?: number;
 	pageSize?: number;

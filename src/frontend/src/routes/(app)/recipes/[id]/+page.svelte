@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import * as m from '$lib/paraglide/messages';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import {
-		timeCategoryLabels,
-		workspaceNeededLabels,
-		messinessLabels
-	} from '$lib/types/recipe';
+	import { timeCategoryLabels, workspaceNeededLabels, messinessLabels } from '$lib/types/recipe';
 	import { markRecipeAsTried, markRecipeAsNotTried, deleteRecipe } from '$lib/api/recipes';
 	import {
 		ArrowLeft,
@@ -16,7 +13,6 @@
 		ChefHat,
 		Zap,
 		Check,
-		X,
 		Edit,
 		Trash2,
 		ExternalLink,
@@ -32,9 +28,7 @@
 
 	const recipe = $derived(data.recipe);
 
-	const totalTime = $derived(
-		(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0) || null
-	);
+	const totalTime = $derived((recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0) || null);
 
 	const cuisineTags = $derived((recipe.tags ?? []).filter((t) => t.tagType === 'Cuisine'));
 	const typeTags = $derived((recipe.tags ?? []).filter((t) => t.tagType === 'Type'));
@@ -52,7 +46,7 @@
 				toast.success('Recipe marked as tried!');
 			}
 			await invalidateAll();
-		} catch (e) {
+		} catch {
 			toast.error('Failed to update recipe status');
 		} finally {
 			isLoading = false;
@@ -67,8 +61,8 @@
 		try {
 			await deleteRecipe(recipe.id);
 			toast.success('Recipe deleted');
-			goto('/');
-		} catch (e) {
+			goto(resolve('/'));
+		} catch {
 			toast.error('Failed to delete recipe');
 		} finally {
 			isLoading = false;
@@ -91,12 +85,12 @@
 <div class="container mx-auto max-w-4xl space-y-6 p-6">
 	<!-- Back button and actions -->
 	<div class="flex items-center justify-between">
-		<Button variant="ghost" onclick={() => goto('/')} class="gap-2">
+		<Button variant="ghost" onclick={() => goto(resolve('/'))} class="gap-2">
 			<ArrowLeft class="h-4 w-4" />
 			Back to recipes
 		</Button>
 		<div class="flex gap-2">
-			<Button variant="outline" href="/recipes/{recipe.id}/edit" class="gap-2">
+			<Button variant="outline" href={resolve(`/recipes/${recipe.id}/edit`)} class="gap-2">
 				<Edit class="h-4 w-4" />
 				Edit
 			</Button>
@@ -128,7 +122,9 @@
 				variant={recipe.isTried ? 'secondary' : 'default'}
 				onclick={handleToggleTried}
 				disabled={isLoading}
-				class="shrink-0 gap-2 {recipe.isTried ? 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100' : ''}"
+				class="shrink-0 gap-2 {recipe.isTried
+					? 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100'
+					: ''}"
 			>
 				{#if recipe.isTried}
 					<Check class="h-4 w-4" />
@@ -224,7 +220,7 @@
 					{#if cuisineTags.length > 0}
 						<div class="flex flex-wrap items-center gap-2">
 							<span class="text-sm text-muted-foreground">Cuisine:</span>
-							{#each cuisineTags as tag}
+							{#each cuisineTags as tag (tag.name)}
 								<Badge variant="secondary">{tag.name}</Badge>
 							{/each}
 						</div>
@@ -232,7 +228,7 @@
 					{#if typeTags.length > 0}
 						<div class="flex flex-wrap items-center gap-2">
 							<span class="text-sm text-muted-foreground">Type:</span>
-							{#each typeTags as tag}
+							{#each typeTags as tag (tag.name)}
 								<Badge>{tag.name}</Badge>
 							{/each}
 						</div>
@@ -240,7 +236,7 @@
 					{#if customTags.length > 0}
 						<div class="flex flex-wrap items-center gap-2">
 							<span class="text-sm text-muted-foreground">Custom:</span>
-							{#each customTags as tag}
+							{#each customTags as tag (tag.name)}
 								<Badge variant="outline">{tag.name}</Badge>
 							{/each}
 						</div>
@@ -260,7 +256,7 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="flex flex-wrap gap-2">
-						{#each recipe.equipment as item}
+						{#each recipe.equipment as item (item.name)}
 							<Badge variant="outline">{item.name}</Badge>
 						{/each}
 					</div>
@@ -269,7 +265,7 @@
 		{/if}
 
 		<!-- Additional info -->
-		{#if recipe.workspaceNeeded !== undefined && recipe.workspaceNeeded !== null || recipe.messiness !== undefined && recipe.messiness !== null}
+		{#if (recipe.workspaceNeeded !== undefined && recipe.workspaceNeeded !== null) || (recipe.messiness !== undefined && recipe.messiness !== null)}
 			<Card.Root>
 				<Card.Header>
 					<Card.Title class="text-lg">Additional Info</Card.Title>
@@ -317,19 +313,22 @@
 			</Card.Root>
 		{/if}
 
-		<!-- Source URL -->
+		<!-- Source URL (external link, not internal navigation) -->
 		{#if recipe.sourceUrl}
 			<Card.Root>
 				<Card.Content class="flex items-center gap-2 p-4">
 					<ExternalLink class="h-4 w-4 text-muted-foreground" />
-					<a
-						href={recipe.sourceUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-sm text-primary hover:underline"
+					{@const externalUrl = recipe.sourceUrl}
+					<span
+						role="link"
+						tabindex="0"
+						class="cursor-pointer text-sm text-primary hover:underline"
+						onclick={() => window.open(externalUrl, '_blank', 'noopener,noreferrer')}
+						onkeydown={(e) =>
+							e.key === 'Enter' && window.open(externalUrl, '_blank', 'noopener,noreferrer')}
 					>
 						View original source
-					</a>
+					</span>
 				</Card.Content>
 			</Card.Root>
 		{/if}

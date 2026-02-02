@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import * as m from '$lib/paraglide/messages';
 	import { RecipeCard } from '$lib/components/recipes';
 	import { RecipeFilters } from '$lib/components/recipes';
@@ -10,24 +11,29 @@
 	let { data } = $props();
 
 	function handleFilterChange(filters: RecipeFiltersType) {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 
 		if (filters.searchTerm) params.set('search', filters.searchTerm);
 		if (filters.isTried !== undefined) params.set('tried', String(filters.isTried));
 		if (filters.timeCategory !== undefined) params.set('time', String(filters.timeCategory));
-		if (filters.workspaceNeeded !== undefined) params.set('workspace', String(filters.workspaceNeeded));
+		if (filters.workspaceNeeded !== undefined)
+			params.set('workspace', String(filters.workspaceNeeded));
 		if (filters.messiness !== undefined) params.set('messiness', String(filters.messiness));
 		if (filters.cuisines) params.set('cuisines', filters.cuisines);
 		if (filters.types) params.set('types', filters.types);
 		if (filters.equipment) params.set('equipment', filters.equipment);
-		if (filters.minProteinGrams !== undefined) params.set('minProtein', String(filters.minProteinGrams));
-		if (filters.pageNumber && filters.pageNumber > 1) params.set('page', String(filters.pageNumber));
+		if (filters.minProteinGrams !== undefined)
+			params.set('minProtein', String(filters.minProteinGrams));
+		if (filters.pageNumber && filters.pageNumber > 1)
+			params.set('page', String(filters.pageNumber));
 
 		const queryString = params.toString();
-		goto(queryString ? `?${queryString}` : '/', { replaceState: true, noScroll: true });
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic query string
+		goto(queryString ? `/?${queryString}` : '/', { replaceState: true, noScroll: true });
 	}
 
 	function handleRecipeClick(recipeId: string) {
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- dynamic route
 		goto(`/recipes/${recipeId}`);
 	}
 
@@ -93,7 +99,9 @@
 		{/if}
 	{:else}
 		<!-- Empty state -->
-		<div class="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+		<div
+			class="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+		>
 			<ChefHat class="h-12 w-12 text-muted-foreground" />
 			<h3 class="mt-4 text-lg font-semibold">No recipes found</h3>
 			<p class="mt-2 text-sm text-muted-foreground">

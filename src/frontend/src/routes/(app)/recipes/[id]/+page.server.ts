@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params, fetch, url }) => {
 	try {
 		const recipe = await getRecipe(params.id, fetch, url.origin);
 		return { recipe };
-	} catch (e) {
+	} catch {
 		throw error(404, 'Recipe not found');
 	}
 };

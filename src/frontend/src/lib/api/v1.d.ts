@@ -764,7 +764,8 @@ export interface components {
 			/** @description The password for authentication. */
 			password: string;
 		};
-		Messiness: number;
+		/** @enum {unknown} */
+		Messiness: 'Low' | 'Medium' | 'High' | null;
 		ProblemDetails: {
 			type?: null | string;
 			title?: null | string;
@@ -893,8 +894,10 @@ export interface components {
 			/** @description The type of the tag. */
 			tagType?: components['schemas']['TagType'];
 		};
-		TagType: string;
-		TimeCategory: number;
+		/** @enum {unknown} */
+		TagType: 'Cuisine' | 'Type' | 'Custom';
+		/** @enum {unknown} */
+		TimeCategory: 'Quick' | 'Medium' | 'Long' | 'Overnight' | null;
 		/** @description Request to update an existing recipe. All fields are optional for partial updates. */
 		UpdateRecipeRequest: {
 			/** @description The title of the recipe. */
@@ -985,7 +988,8 @@ export interface components {
 			/** @description The roles assigned to the user. */
 			roles?: string[];
 		};
-		WorkspaceNeeded: number;
+		/** @enum {unknown} */
+		WorkspaceNeeded: 'Small' | 'Medium' | 'Large' | null;
 	};
 	responses: never;
 	parameters: never;

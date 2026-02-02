@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
-	import {
-		type Recipe,
-		timeCategoryLabels,
-		workspaceNeededLabels
-	} from '$lib/types/recipe';
+	import { type Recipe, timeCategoryLabels, workspaceNeededLabels } from '$lib/types/recipe';
 	import { Clock, ChefHat, Zap, Check } from 'lucide-svelte';
 
 	interface Props {
@@ -15,9 +11,7 @@
 
 	let { recipe, onclick }: Props = $props();
 
-	const totalTime = $derived(
-		(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0) || null
-	);
+	const totalTime = $derived((recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0) || null);
 
 	// TagType is a string enum from backend: "Cuisine", "Type", "Custom"
 	const cuisineTags = $derived((recipe.tags ?? []).filter((t) => t.tagType === 'Cuisine'));
@@ -40,7 +34,10 @@
 		<div class="flex items-start justify-between gap-2">
 			<Card.Title class="line-clamp-2 text-lg">{recipe.title}</Card.Title>
 			{#if recipe.isTried}
-				<Badge variant="secondary" class="shrink-0 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+				<Badge
+					variant="secondary"
+					class="shrink-0 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+				>
 					<Check class="mr-1 h-3 w-3" />
 					Tried
 				</Badge>
@@ -91,14 +88,16 @@
 		<!-- Tags -->
 		{#if cuisineTags.length > 0 || typeTags.length > 0}
 			<div class="flex flex-wrap gap-1.5">
-				{#each cuisineTags.slice(0, 3) as tag}
+				{#each cuisineTags.slice(0, 3) as tag (tag.name)}
 					<Badge variant="secondary" class="text-xs">{tag.name}</Badge>
 				{/each}
-				{#each typeTags.slice(0, 2) as tag}
+				{#each typeTags.slice(0, 2) as tag (tag.name)}
 					<Badge class="text-xs">{tag.name}</Badge>
 				{/each}
 				{#if cuisineTags.length + typeTags.length > 5}
-					<Badge variant="outline" class="text-xs">+{cuisineTags.length + typeTags.length - 5}</Badge>
+					<Badge variant="outline" class="text-xs"
+						>+{cuisineTags.length + typeTags.length - 5}</Badge
+					>
 				{/if}
 			</div>
 		{/if}

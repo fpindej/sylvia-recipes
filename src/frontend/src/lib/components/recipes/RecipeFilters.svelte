@@ -4,9 +4,9 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		type RecipeFilters,
-		WorkspaceNeededValues,
-		TimeCategoryValues,
-		MessinessValues,
+		type TimeCategory,
+		type WorkspaceNeeded,
+		type Messiness,
 		timeCategoryLabels,
 		workspaceNeededLabels,
 		messinessLabels
@@ -20,15 +20,10 @@
 
 	let { filters, onfilterchange }: Props = $props();
 
-	// Local state for debouncing search input
-	let localSearchTerm = $state('');
+	// Local state for debouncing search input - syncs with filters.searchTerm
+	let localSearchTerm = $derived.by(() => filters.searchTerm ?? '');
 	let showFilters = $state(false);
 	let debounceTimer: ReturnType<typeof setTimeout>;
-
-	// Sync local state when filters prop changes (e.g., from URL navigation)
-	$effect(() => {
-		localSearchTerm = filters.searchTerm ?? '';
-	});
 
 	function handleSearchInput(event: Event) {
 		const value = (event.target as HTMLInputElement).value;
@@ -46,20 +41,21 @@
 	}
 
 	function toggleTriedFilter() {
-		const newValue = filters.isTried === undefined ? true : filters.isTried === true ? false : undefined;
+		const newValue =
+			filters.isTried === undefined ? true : filters.isTried === true ? false : undefined;
 		onfilterchange({ ...filters, isTried: newValue, pageNumber: 1 });
 	}
 
-	function setTimeCategory(value: string | undefined) {
-		onfilterchange({ ...filters, timeCategory: value, pageNumber: 1 });
+	function setTimeCategory(value: TimeCategory | undefined) {
+		onfilterchange({ ...filters, timeCategory: value ?? undefined, pageNumber: 1 });
 	}
 
-	function setWorkspaceNeeded(value: string | undefined) {
-		onfilterchange({ ...filters, workspaceNeeded: value, pageNumber: 1 });
+	function setWorkspaceNeeded(value: WorkspaceNeeded | undefined) {
+		onfilterchange({ ...filters, workspaceNeeded: value ?? undefined, pageNumber: 1 });
 	}
 
-	function setMessiness(value: string | undefined) {
-		onfilterchange({ ...filters, messiness: value, pageNumber: 1 });
+	function setMessiness(value: Messiness | undefined) {
+		onfilterchange({ ...filters, messiness: value ?? undefined, pageNumber: 1 });
 	}
 
 	function clearAllFilters() {
@@ -84,19 +80,19 @@
 	<!-- Search bar -->
 	<div class="flex gap-2">
 		<div class="relative flex-1">
-			<Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+			<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 			<Input
 				type="text"
 				placeholder="Search recipes..."
 				value={localSearchTerm}
 				oninput={handleSearchInput}
-				class="pl-10 pr-10"
+				class="pr-10 pl-10"
 			/>
 			{#if localSearchTerm}
 				<button
 					type="button"
 					onclick={clearSearch}
-					class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+					class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
 				>
 					<X class="h-4 w-4" />
 				</button>
@@ -118,7 +114,7 @@
 
 	<!-- Filter panel -->
 	{#if showFilters}
-		<div class="rounded-lg border bg-card p-4 space-y-4">
+		<div class="space-y-4 rounded-lg border bg-card p-4">
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				<!-- Tried filter -->
 				<div class="space-y-2">
@@ -146,11 +142,11 @@
 						>
 							Any
 						</Button>
-						{#each Object.entries(timeCategoryLabels) as [value, label]}
+						{#each Object.entries(timeCategoryLabels) as [value, label] (value)}
 							<Button
 								variant={filters.timeCategory === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setTimeCategory(value)}
+								onclick={() => setTimeCategory(value as TimeCategory)}
 							>
 								{label.split(' ')[0]}
 							</Button>
@@ -169,11 +165,11 @@
 						>
 							Any
 						</Button>
-						{#each Object.entries(workspaceNeededLabels) as [value, label]}
+						{#each Object.entries(workspaceNeededLabels) as [value, label] (value)}
 							<Button
 								variant={filters.workspaceNeeded === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setWorkspaceNeeded(value)}
+								onclick={() => setWorkspaceNeeded(value as WorkspaceNeeded)}
 							>
 								{label}
 							</Button>
@@ -192,11 +188,11 @@
 						>
 							Any
 						</Button>
-						{#each Object.entries(messinessLabels) as [value, label]}
+						{#each Object.entries(messinessLabels) as [value, label] (value)}
 							<Button
 								variant={filters.messiness === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setMessiness(value)}
+								onclick={() => setMessiness(value as Messiness)}
 							>
 								{label}
 							</Button>

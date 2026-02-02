@@ -3,7 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { cn } from '$lib/utils';
 	import { buttonVariants } from '$lib/components/ui/button';
-	import { LayoutDashboard, ChartPie, FileText, ChefHat, type IconProps } from '@lucide/svelte';
+	import { ChartPie, FileText, ChefHat, type IconProps } from '@lucide/svelte';
 	import * as m from '$lib/paraglide/messages';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import type { Component } from 'svelte';
