@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Recipes.WebApi.Features.OpenApi.Transformers;
 using Scalar.AspNetCore;
 
@@ -10,8 +11,16 @@ internal static class WebApplicationBuilderExtensions
         builder.Services.AddOpenApi("v1", opt =>
         {
             opt.AddDocumentTransformer<ProjectDocumentTransformer>();
-            opt.AddSchemaTransformer<EnumSchemaTransformer>();
-            opt.AddSchemaTransformer<NumericSchemaTransformer>(); });
+            opt.AddSchemaTransformer<NumericSchemaTransformer>();
+        });
+
+        // Configure HTTP JSON options with JsonStringEnumConverter so OpenAPI spec
+        // generates string enum values (e.g., "Small", "Medium", "Large") instead of integers.
+        // This is separate from AddControllers().AddJsonOptions() which handles API responses.
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
         return builder;
     }
