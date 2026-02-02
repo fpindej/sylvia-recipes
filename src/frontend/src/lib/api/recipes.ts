@@ -61,8 +61,8 @@ export async function getRecipes(
 /**
  * Fetches a single recipe by ID.
  */
-export async function getRecipe(id: string, customFetch?: typeof fetch): Promise<Recipe> {
-	const client = createApiClient(customFetch);
+export async function getRecipe(id: string, customFetch?: typeof fetch, origin?: string): Promise<Recipe> {
+	const client = createApiClient(customFetch, origin);
 
 	const { data, error, response } = await client.GET('/api/v1/recipes/{id}', {
 		params: { path: { id } }
