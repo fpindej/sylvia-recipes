@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Recipes.Domain.Entities;
 using Recipes.Infrastructure.Features.Authentication.Models;
 using Recipes.Infrastructure.Persistence.Extensions;
 
@@ -9,6 +10,11 @@ internal class RecipesDbContext(DbContextOptions<RecipesDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Equipment> Equipment { get; set; }
+    public DbSet<RecipeTag> RecipeTags { get; set; }
+    public DbSet<RecipeEquipment> RecipeEquipment { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
