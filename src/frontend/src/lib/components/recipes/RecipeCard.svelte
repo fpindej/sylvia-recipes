@@ -4,8 +4,7 @@
 	import {
 		type Recipe,
 		timeCategoryLabels,
-		workspaceNeededLabels,
-		TagType
+		workspaceNeededLabels
 	} from '$lib/types/recipe';
 	import { Clock, ChefHat, Zap, Check } from 'lucide-svelte';
 
@@ -20,8 +19,9 @@
 		(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0) || null
 	);
 
-	const cuisineTags = $derived(recipe.tags.filter((t) => t.tagType === TagType.Cuisine));
-	const typeTags = $derived(recipe.tags.filter((t) => t.tagType === TagType.Type));
+	// TagType is a string enum from backend: "Cuisine", "Type", "Custom"
+	const cuisineTags = $derived((recipe.tags ?? []).filter((t) => t.tagType === 'Cuisine'));
+	const typeTags = $derived((recipe.tags ?? []).filter((t) => t.tagType === 'Type'));
 </script>
 
 <Card.Root
