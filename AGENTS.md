@@ -41,6 +41,7 @@ src/
 │   │   │       └── Options/        # Configuration options
 │   │   ├── Persistence/
 │   │   │   ├── RecipesDbContext.cs
+│   │   │   ├── Migrations/         # EF Core migrations
 │   │   │   ├── Extensions/         # EF helpers, query extensions
 │   │   │   └── Configurations/     # Shared EF configurations
 │   │   └── Logging/                # Serilog configuration
@@ -198,7 +199,14 @@ public class MyController(IMyService service) : ControllerBase
 1. **Create entity** in `Domain/Entities/` extending `BaseEntity`
 2. **Add DbSet** to `RecipesDbContext`
 3. **Create configuration** in `Infrastructure/Features/{Feature}/Configurations/`
-4. **Add migration**: `dotnet ef migrations add AddNewEntity ...`
+4. **Add migration**:
+   ```bash
+   cd src/backend
+   dotnet ef migrations add MigrationName \
+     --project Recipes.Infrastructure \
+     --startup-project Recipes.WebApi \
+     --output-dir Persistence/Migrations
+   ```
 
 ### Adding Validation
 

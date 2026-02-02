@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Recipes.Infrastructure.Features.Postgres.Migrations
+namespace Recipes.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddRecipeEntities : Migration

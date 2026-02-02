@@ -9,10 +9,10 @@ using Recipes.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Recipes.Infrastructure.Features.Postgres.Migrations
+namespace Recipes.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RecipesDbContext))]
-    [Migration("20260202123749_AddRecipeEntities")]
+    [Migration("20260202124049_AddRecipeEntities")]
     partial class AddRecipeEntities
     {
         /// <inheritdoc />
