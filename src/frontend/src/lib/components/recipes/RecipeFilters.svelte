@@ -50,15 +50,15 @@
 		onfilterchange({ ...filters, isTried: newValue, pageNumber: 1 });
 	}
 
-	function setTimeCategory(value: number | undefined) {
+	function setTimeCategory(value: string | undefined) {
 		onfilterchange({ ...filters, timeCategory: value, pageNumber: 1 });
 	}
 
-	function setWorkspaceNeeded(value: number | undefined) {
+	function setWorkspaceNeeded(value: string | undefined) {
 		onfilterchange({ ...filters, workspaceNeeded: value, pageNumber: 1 });
 	}
 
-	function setMessiness(value: number | undefined) {
+	function setMessiness(value: string | undefined) {
 		onfilterchange({ ...filters, messiness: value, pageNumber: 1 });
 	}
 
@@ -148,9 +148,9 @@
 						</Button>
 						{#each Object.entries(timeCategoryLabels) as [value, label]}
 							<Button
-								variant={filters.timeCategory === Number(value) ? 'default' : 'outline'}
+								variant={filters.timeCategory === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setTimeCategory(Number(value))}
+								onclick={() => setTimeCategory(value)}
 							>
 								{label.split(' ')[0]}
 							</Button>
@@ -171,9 +171,9 @@
 						</Button>
 						{#each Object.entries(workspaceNeededLabels) as [value, label]}
 							<Button
-								variant={filters.workspaceNeeded === Number(value) ? 'default' : 'outline'}
+								variant={filters.workspaceNeeded === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setWorkspaceNeeded(Number(value))}
+								onclick={() => setWorkspaceNeeded(value)}
 							>
 								{label}
 							</Button>
@@ -194,9 +194,9 @@
 						</Button>
 						{#each Object.entries(messinessLabels) as [value, label]}
 							<Button
-								variant={filters.messiness === Number(value) ? 'default' : 'outline'}
+								variant={filters.messiness === value ? 'default' : 'outline'}
 								size="sm"
-								onclick={() => setMessiness(Number(value))}
+								onclick={() => setMessiness(value)}
 							>
 								{label}
 							</Button>

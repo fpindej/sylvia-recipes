@@ -60,9 +60,9 @@
 	let sourceUrl = $state(initialValues.sourceUrl);
 	let imageUrl = $state(initialValues.imageUrl);
 	let notes = $state(initialValues.notes);
-	let workspaceNeeded = $state<number | null>(initialValues.workspaceNeeded);
-	let timeCategory = $state<number | null>(initialValues.timeCategory);
-	let messiness = $state<number | null>(initialValues.messiness);
+	let workspaceNeeded = $state<string | null>(initialValues.workspaceNeeded ?? null);
+	let timeCategory = $state<string | null>(initialValues.timeCategory ?? null);
+	let messiness = $state<string | null>(initialValues.messiness ?? null);
 
 	// Tags state
 	let cuisineTags = $state<string[]>(initialValues.cuisineTags);
@@ -288,7 +288,7 @@
 						id="timeCategory"
 						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
 						value={timeCategory ?? ''}
-						onchange={(e) => timeCategory = e.currentTarget.value ? Number(e.currentTarget.value) : null}
+						onchange={(e) => timeCategory = e.currentTarget.value || null}
 					>
 						<option value="">Select...</option>
 						{#each Object.entries(timeCategoryLabels) as [value, label]}
@@ -302,7 +302,7 @@
 						id="workspaceNeeded"
 						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
 						value={workspaceNeeded ?? ''}
-						onchange={(e) => workspaceNeeded = e.currentTarget.value ? Number(e.currentTarget.value) : null}
+						onchange={(e) => workspaceNeeded = e.currentTarget.value || null}
 					>
 						<option value="">Select...</option>
 						{#each Object.entries(workspaceNeededLabels) as [value, label]}
@@ -316,7 +316,7 @@
 						id="messiness"
 						class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
 						value={messiness ?? ''}
-						onchange={(e) => messiness = e.currentTarget.value ? Number(e.currentTarget.value) : null}
+						onchange={(e) => messiness = e.currentTarget.value || null}
 					>
 						<option value="">Select...</option>
 						{#each Object.entries(messinessLabels) as [value, label]}

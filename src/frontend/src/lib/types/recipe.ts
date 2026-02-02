@@ -21,24 +21,24 @@ export type Messiness = components['schemas']['Messiness'];
 export type TagType = components['schemas']['TagType']; // String enum: "Cuisine", "Type", "Custom"
 
 // Enum values for use in code
-// WorkspaceNeeded, TimeCategory, Messiness are numbers from backend
+// With JsonStringEnumConverter, backend returns string values like "Small", "Quick", "Low"
 export const WorkspaceNeededValues = {
-	Small: 0,
-	Medium: 1,
-	Large: 2
+	Small: 'Small',
+	Medium: 'Medium',
+	Large: 'Large'
 } as const;
 
 export const TimeCategoryValues = {
-	Quick: 0,
-	Medium: 1,
-	Long: 2,
-	Overnight: 3
+	Quick: 'Quick',
+	Medium: 'Medium',
+	Long: 'Long',
+	Overnight: 'Overnight'
 } as const;
 
 export const MessinessValues = {
-	Low: 0,
-	Medium: 1,
-	High: 2
+	Low: 'Low',
+	Medium: 'Medium',
+	High: 'High'
 } as const;
 
 // TagType is a string enum from backend
@@ -54,29 +54,29 @@ export interface RecipeFilters {
 	cuisines?: string;
 	types?: string;
 	equipment?: string;
-	workspaceNeeded?: number;
-	timeCategory?: number;
-	messiness?: number;
+	workspaceNeeded?: string;
+	timeCategory?: string;
+	messiness?: string;
 	minProteinGrams?: number;
 	pageNumber?: number;
 	pageSize?: number;
 }
 
 // Helper functions for enum display
-export const workspaceNeededLabels: Record<number, string> = {
+export const workspaceNeededLabels: Record<string, string> = {
 	[WorkspaceNeededValues.Small]: 'Small',
 	[WorkspaceNeededValues.Medium]: 'Medium',
 	[WorkspaceNeededValues.Large]: 'Large'
 };
 
-export const timeCategoryLabels: Record<number, string> = {
+export const timeCategoryLabels: Record<string, string> = {
 	[TimeCategoryValues.Quick]: 'Quick (≤30 min)',
 	[TimeCategoryValues.Medium]: 'Medium (1-3 hrs)',
 	[TimeCategoryValues.Long]: 'Long (3+ hrs)',
 	[TimeCategoryValues.Overnight]: 'Overnight'
 };
 
-export const messinessLabels: Record<number, string> = {
+export const messinessLabels: Record<string, string> = {
 	[MessinessValues.Low]: 'Low',
 	[MessinessValues.Medium]: 'Medium',
 	[MessinessValues.High]: 'High'
