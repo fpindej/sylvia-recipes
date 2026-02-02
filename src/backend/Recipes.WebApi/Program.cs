@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Recipes.Infrastructure.Features.Authentication.Extensions;
+using Recipes.Infrastructure.Features.Recipes.Extensions;
 using Recipes.Infrastructure.Persistence.Extensions;
 using Recipes.Infrastructure.Caching.Extensions;
 using Recipes.Infrastructure.Cookies.Extensions;
@@ -46,6 +47,9 @@ try
 
         Log.Debug("Adding cookie services");
         builder.Services.AddCookieServices();
+
+        Log.Debug("Adding recipe services");
+        builder.Services.AddRecipes();
     }
     catch (Exception ex)
     {
