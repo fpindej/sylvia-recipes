@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ url, fetch }) => {
 		pageSize: searchParams.has('pageSize') ? Number(searchParams.get('pageSize')) : 12
 	};
 
-	const recipesResponse = await getRecipes(filters, fetch);
+	const recipesResponse = await getRecipes(filters, fetch, url.origin);
 
 	return {
 		recipes: recipesResponse.items,

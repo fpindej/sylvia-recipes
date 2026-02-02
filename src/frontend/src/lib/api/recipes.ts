@@ -28,9 +28,10 @@ export interface RecipeFilters {
  */
 export async function getRecipes(
 	filters: RecipeFilters = {},
-	customFetch?: typeof fetch
+	customFetch?: typeof fetch,
+	baseUrl?: string
 ): Promise<RecipeListResponse> {
-	const client = createApiClient(customFetch);
+	const client = createApiClient(customFetch, baseUrl);
 
 	const { data, error, response } = await client.GET('/api/v1/recipes', {
 		params: {
