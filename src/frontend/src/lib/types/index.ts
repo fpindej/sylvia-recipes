@@ -5,3 +5,6 @@ import type { components } from '$lib/api/v1';
  * Centralizes type definitions to avoid repetition across components.
  */
 export type User = components['schemas']['UserResponse'];
+
+// Re-export recipe types
+export * from './recipe';
