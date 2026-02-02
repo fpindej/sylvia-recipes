@@ -11,6 +11,9 @@ namespace Recipes.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Enable pg_trgm extension for fuzzy text search
+            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
+
             migrationBuilder.CreateTable(
                 name: "equipment",
                 columns: table => new
@@ -219,6 +222,9 @@ namespace Recipes.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "tags");
+
+            // Drop pg_trgm extension
+            migrationBuilder.Sql("DROP EXTENSION IF EXISTS pg_trgm;");
         }
     }
 }
