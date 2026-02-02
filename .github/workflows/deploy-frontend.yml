@@ -1,0 +1,109 @@
+name: Deploy Frontend
+
+on:
+  push:
+    tags:
+      - 'frontend-v*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fpindej/recipes/frontend
+  DEPLOY_PATH: /var/apps/recipes
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      image: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/frontend-v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Deploying frontend version: $VERSION"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/frontend
+          file: ./src/frontend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to Server
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_ADDRESS }}
+          username: ${{ secrets.DEPLOYMENT_USER }}
+          key: ${{ secrets.DEPLOYMENT_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            
+            # Pull the new image
+            docker compose pull frontend
+            
+            # Restart only the frontend service
+            docker compose up -d frontend
+            
+            # Wait a moment for the container to start
+            sleep 5
+            
+            # Check if container is running
+            if docker compose ps frontend | grep -q "Up"; then
+              echo "Frontend is running!"
+            else
+              echo "Frontend failed to start!"
+              docker compose logs frontend --tail=50
+              exit 1
+            fi
+            
+            # Cleanup old images
+            docker image prune -f
+
+      - name: Deployment Summary
+        run: |
+          echo "## Frontend Deployment Complete! 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.build-and-push.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** ${{ secrets.SERVER_ADDRESS }}" >> $GITHUB_STEP_SUMMARY

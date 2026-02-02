@@ -1,7 +1,7 @@
 {
-  "registry": "myusername",
-  "backendImage": "recipes-api",
-  "frontendImage": "recipes-frontend",
+  "registry": "ghcr.io/fpindej/recipes",
+  "backendImage": "api",
+  "frontendImage": "frontend",
   "backendVersion": "0.1.0",
   "frontendVersion": "0.1.0",
   "platform": "linux/amd64"
